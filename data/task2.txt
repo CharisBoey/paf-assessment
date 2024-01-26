@@ -59,4 +59,5 @@ db.reviews.aggregate([
 ])
 
 mongoexport --collection=reviews --db=bedandbreakfast --out=data\reviews.json
+mongoexport --collection=listings --db=bedandbreakfast --out=data\reviews.json
 
