@@ -4,11 +4,14 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import vttp2023.batch4.paf.assessment.bedandbreakfastapp.models.Accommodation;
 import vttp2023.batch4.paf.assessment.bedandbreakfastapp.models.AccommodationSummary;
 import vttp2023.batch4.paf.assessment.bedandbreakfastapp.models.Bookings;
+import vttp2023.batch4.paf.assessment.bedandbreakfastapp.models.User;
+import vttp2023.batch4.paf.assessment.bedandbreakfastapp.repositories.BookingsRepository;
 import vttp2023.batch4.paf.assessment.bedandbreakfastapp.repositories.ListingsRepository;
 
 
@@ -23,6 +26,9 @@ public class ListingsService {
 
 	@Autowired
 	private ForexService forexSvc;
+
+	@Autowired
+	BookingsRepository bookingsRepo;
 	
 	// IMPORTANT: DO NOT MODIFY THIS METHOD.
 	// If this method is changed, any assessment task relying on this method will
@@ -58,7 +64,10 @@ public class ListingsService {
 	// TODO: Task 6 
 	// IMPORTANT: DO NOT MODIFY THE SIGNATURE OF THIS METHOD.
 	// You may only add annotations and throw exceptions to this method
-	public void createBooking(Bookings booking) {
+	public void createBooking(Bookings booking) throws DataAccessException, NoSuchFieldException, SecurityException, IllegalArgumentException {
+		User user = new User(booking.getEmail(), booking.getName());
+		bookingsRepo.newUser(user);
+		bookingsRepo.newBookings(booking);
 	}
 
 }

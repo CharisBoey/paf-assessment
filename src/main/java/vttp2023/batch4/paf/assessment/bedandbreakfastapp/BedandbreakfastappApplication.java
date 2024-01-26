@@ -17,12 +17,23 @@ import org.springframework.data.mongodb.core.aggregation.ProjectionOperation;
 import org.springframework.data.mongodb.core.aggregation.SortOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
+
+import vttp2023.batch4.paf.assessment.bedandbreakfastapp.models.Bookings;
+import vttp2023.batch4.paf.assessment.bedandbreakfastapp.services.ListingsService;
 
 @SpringBootApplication
 public class BedandbreakfastappApplication implements CommandLineRunner{
 
 	@Autowired
 	MongoTemplate template;
+
+	@Autowired
+    private JdbcTemplate Jtemplate;
+
+	@Autowired
+	ListingsService listingsSvc;
 	
 	public static void main(String[] args) {
 		SpringApplication.run(BedandbreakfastappApplication.class, args);
@@ -77,5 +88,23 @@ public class BedandbreakfastappApplication implements CommandLineRunner{
 
 		List<Document> docs = results.getMappedResults();
 		System.out.println("!!!++" + docs.toString());  */
+
+		/* SqlRowSet rs = Jtemplate.queryForRowSet(queries.SQL_Find_User, "barney@gmail.com","Barney Rubble");
+		
+		int resultInt = 0;
+
+        while (rs.next()){
+            resultInt = rs.getInt("count(*)");
+        } 
+		System.out.println("llllllll///"+resultInt); */
+
+		/* Bookings bookings = new Bookings();
+		bookings.setName("yy");
+		bookings.setEmail("yy@");
+		bookings.setDuration(4);
+		bookings.setListingId("21212121");
+
+		listingsSvc.createBooking(bookings); */
+
 	}
 }

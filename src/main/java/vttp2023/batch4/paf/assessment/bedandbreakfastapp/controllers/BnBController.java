@@ -1,15 +1,23 @@
 package vttp2023.batch4.paf.assessment.bedandbreakfastapp.controllers;
 
+import java.io.StringReader;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -17,8 +25,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import vttp2023.batch4.paf.assessment.bedandbreakfastapp.Utils;
 import vttp2023.batch4.paf.assessment.bedandbreakfastapp.models.Accommodation;
+import vttp2023.batch4.paf.assessment.bedandbreakfastapp.models.Bookings;
 import vttp2023.batch4.paf.assessment.bedandbreakfastapp.services.ListingsService;
 
 
@@ -86,5 +99,41 @@ public class BnBController {
 	}
 
 	// TODO: Task 6
+	
+	@PostMapping("accommodation")
+	public ResponseEntity<String> processBooking(@RequestBody String payload) {
+		
+		Bookings bookings = new Bookings();
+		JsonReader r = Json.createReader(new StringReader(payload));
+      	JsonObject j = r.readObject();
+
+		bookings.setName(j.getString("name"));
+		bookings.setEmail(j.getString("email"));
+		bookings.setDuration(j.getInt("nights"));
+		bookings.setListingId(j.getString("id"));
+		
+		try {
+			listingsSvc.createBooking(bookings);
+		} catch (DataAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return ResponseEntity.status(500).body("{DataAccessException Error}");
+		} catch (NoSuchFieldException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return ResponseEntity.status(500).body("{NoSuchFieldException Error}");
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return ResponseEntity.status(500).body("{SecurityException Error}");
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return ResponseEntity.status(500).body("{IllegalArgumentException Error}");
+		}
+
+		return ResponseEntity.ok("{}");
+	}
+	
 
 }
