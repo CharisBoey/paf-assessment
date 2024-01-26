@@ -3,9 +3,6 @@ Write your Task 2 answers in this file
 Local Import:
 mongoimport -hlocalhost --port=27017 -dbedandbreakfast -clistings_and_reviews data/listings.json
 
-Remote Import:
-mongoimport --uri=mongodb://mongo:2EhC6gFeB-2C4-6EbG556CB6DG4bFCcb@monorail.proxy.rlwy.net:37214/?authSource=admin --db=bedandbreakfast -c listings_and_reviews --type=json --file=C:\Users\chari\Desktop\paf_assessment\data\listings.json
-
 //TASK 2.2 creating listings (only Australia) database
 db.listings_and_reviews.aggregate([
     { $match: { "address.country":{
@@ -35,6 +32,21 @@ db.listings.aggregate([
 ])
 
 //TASK2.5 export reviews collection a csv file
+Attempted cleaning that does not work:
+db.listings.aggregate([
+    {$project: {
+        "reviews._id":1,
+        "reviews.date":1,
+        "reviews.listing_id":1,
+        "reviews.reviewer_name":{$replaceAll: {input: "$reviews.reviewer_name", find:",", replacement:""}},
+        "reviews.comments":{$replaceAll: {input: "$reviews.comments", find:"\n", replacement:""},
+                                         {input: "$reviews.comments", find:"\r", replacement:""}
+                                         }}
+    },
+    {$out:'reviews'}
+])
+
+Official one done:
 db.reviews.aggregate([
     {$project: {
         "_id":0,
