@@ -1,0 +1,50 @@
+Write your Task 2 answers in this file
+
+Local Import:
+mongoimport -hlocalhost --port=27017 -dbedandbreakfast -clistings_and_reviews data/listings.json
+
+Remote Import:
+mongoimport --uri=mongodb://mongo:2EhC6gFeB-2C4-6EbG556CB6DG4bFCcb@monorail.proxy.rlwy.net:37214/?authSource=admin --db=bedandbreakfast -c listings_and_reviews --type=json --file=C:\Users\chari\Desktop\paf_assessment\data\listings.json
+
+//TASK 2.2 creating listings (only Australia) database
+db.listings_and_reviews.aggregate([
+    { $match: { "address.country":{
+                        $regex:"australia",
+                        $options:"i"
+                        }        
+                }},
+    {$out: 'listings'}
+])
+
+//TASK 2.3 creating reviews database
+db.listings.aggregate([
+    {$project: {
+        "reviews._id":1,
+        "reviews.date":1,
+        "reviews.listing_id":1,
+        "reviews.reviewer_name":1,
+        "reviews.comments":1}
+    },
+    {$out:'reviews'}
+])
+
+//TASK 2.4 delete reviews attribute from listings
+db.listings.aggregate([
+   { $unset: [ "reviews"] },
+   {$out:'listings'}
+])
+
+//TASK2.5 export reviews collection a csv file
+db.reviews.aggregate([
+    {$project: {
+        "_id":0,
+        "reviews.date":1,
+        "reviews.listing_id":1,
+        "reviews.reviewer_name":1,
+        "reviews.comments":1}
+    },
+    {$out:'reviews'}
+])
+
+mongoexport --collection=reviews --db=bedandbreakfast --out=data\reviews.json
+
