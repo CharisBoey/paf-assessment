@@ -1,5 +1,7 @@
 package vttp2023.batch4.paf.assessment.bedandbreakfastapp.models;
 
+import org.bson.Document;
+
 // IMPORTANT: DO NOT MODIFY THIS CLASS
 // If this class is changed, any assessment task relying on this class will
 // not be marked
@@ -21,4 +23,16 @@ public class AccommodationSummary {
 
 	public void setPrice(float price) { this.price = price; }
 	public float getPrice() { return this.price; }
+
+
+	public static AccommodationSummary JSONToObj(Document jsonObject){
+        AccommodationSummary accSum = new AccommodationSummary();
+
+		accSum.setId(jsonObject.getString("_id"));
+		accSum.setName(jsonObject.getString("name"));
+		accSum.setAccomodates(jsonObject.getInteger("accommodates"));
+		accSum.setPrice(jsonObject.get("price",Number.class).floatValue());
+    
+        return accSum;
+    }
 }

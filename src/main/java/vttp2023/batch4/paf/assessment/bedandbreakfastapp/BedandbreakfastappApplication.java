@@ -63,7 +63,7 @@ public class BedandbreakfastappApplication implements CommandLineRunner{
 			}}
 		]); */
 
-		MatchOperation matchOperation = Aggregation.match(Criteria.where("address.suburb").regex("Fairlight","i").and("price").lte(100).and("accomodates").gte(2).and("min_nights").lte(5));
+		/* MatchOperation matchOperation = Aggregation.match(Criteria.where("address.suburb").regex("Fairlight","i").and("price").lte(100).and("accommodates").gte(2).and("min_nights").lte(5)); 
 
 		ProjectionOperation projectionOperation = Aggregation.project("_id","name","accommodates","price");
 
@@ -76,6 +76,6 @@ public class BedandbreakfastappApplication implements CommandLineRunner{
 		Document.class);
 
 		List<Document> docs = results.getMappedResults();
-		System.out.println("!!!++" + docs.toString()); 
+		System.out.println("!!!++" + docs.toString());  */
 	}
 }
