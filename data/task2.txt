@@ -27,7 +27,7 @@ db.listings.aggregate([
 
 //TASK 2.4 delete reviews attribute from listings
 db.listings.aggregate([
-   { $unset: [ "reviews"] },
+   {$unset: [ "reviews"] },
    {$out:'listings'}
 ])
 
@@ -61,3 +61,41 @@ db.reviews.aggregate([
 mongoexport --collection=reviews --db=bedandbreakfast --out=data\reviews.json
 mongoexport --collection=listings --db=bedandbreakfast --out=data\reviews.json
 
+
+
+
+
+ANSWERS:---------------------------------------------------------------------------------------------------
+Task 2.3!!
+//must unwind
+
+db.listings.aggregate([
+    {$unwind:"$reviews"},
+    {$project: {
+                "_id":"reviews_id",
+                date: "$reviews.date",
+                listing_id:"$reviews.listing_id",
+                reviewer_name:"$reviews.reviewer_name",
+                comments:"$reviews.comments"}
+    },
+    {$project: {
+                "_id":1,
+                date:1,
+                listing_id:1,
+                reviewer_name:{$replaceAll: {input: "$reviews.reviewer_name", find:",", replacement:""}},
+                comments:{$replaceAll:  {input: "$reviews.comments", find:"\n", replacement:""},
+                                        {input: "$reviews.comments", find:"\r", replacement:""}
+                                        },                  
+                }
+    },
+    {$out: "reviews"}
+    
+])
+
+
+//If you wanna extract a sample, can use $limit to extract
+//Start from a value $skip
+//DO BEFORE EVERYTHING ELSE DURING TESTING 
+
+//MONGO EXPORT ANSWERRR
+mongoexport --collection=reviews --db=bedandbreakfast --out=data\reviews.json --fields date,listing_id,reviewer_name,comments

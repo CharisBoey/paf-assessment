@@ -51,6 +51,13 @@ public class ListingsRepository {
 			}
 		]);
 	 */
+
+	// ANSWER ---------------------------------------------------------------------------------------------
+	// db.listings.aggregate([
+	// 	{$group:{_id:"$address.suburb"}}
+	// ])
+	//TO PREVENT DUPLICATES
+	// ANSWER END -----------------------------------------------------------------------------------------
 	
 	public List<String> getSuburbs(String country){
 

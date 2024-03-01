@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import vttp2023.batch4.paf.assessment.bedandbreakfastapp.models.Accommodation;
 import vttp2023.batch4.paf.assessment.bedandbreakfastapp.models.AccommodationSummary;
@@ -62,12 +63,49 @@ public class ListingsService {
 	}
 
 	// TODO: Task 6 
+	//REQUIRES A TRANSACTION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ON SERVICE METHOD
 	// IMPORTANT: DO NOT MODIFY THE SIGNATURE OF THIS METHOD.
 	// You may only add annotations and throw exceptions to this method
-	public void createBooking(Bookings booking) throws DataAccessException, NoSuchFieldException, SecurityException, IllegalArgumentException {
+	/* public void createBooking(Bookings booking) throws DataAccessException, NoSuchFieldException, SecurityException, IllegalArgumentException {
 		User user = new User(booking.getEmail(), booking.getName());
 		bookingsRepo.newUser(user);
 		bookingsRepo.newBookings(booking);
+	} */
+
+	//ANSWER TASK 6 METHOD 1 ------------------------------------------------------------------------------
+
+	/* @Transactional(rollbackFor= BookingException.class)
+	public void createBooking(Bookings booking) throws BookingException{
+		Optional<User> opt = bookingsRepo.userExists(booking.getEmail());
+		User user;
+
+		if(opt.isEmpty()){
+			user = new User(booking.getEmail(), booking.getName()); 
+			bookingsRepo.newUser(user);
+		}
+
+		bookingsRepo.newBookings(booking);
+	} */
+
+	//END ANSWER ------------------------------------------------------------------------------------------
+
+	//ANSWER TASK 6 METHOD 2 ------------------------------------------------------------------------------
+
+	@Transactional(rollbackFor= BookingException.class)
+	public void createBooking(Bookings booking) throws BookingException {
+		try{ Optional<User> opt = bookingsRepo.userExists(booking.getEmail());
+			User user;
+
+			if(opt.isEmpty()){
+				user = new User(booking.getEmail(), booking.getName()); 
+				bookingsRepo.newUser(user);
+			}
+
+			bookingsRepo.newBookings(booking);
+		} catch (Exception ex){
+			throw new BookingException(ex.getMessage());
+		}
 	}
 
+	//END ANSWER ------------------------------------------------------------------------------------------
 }

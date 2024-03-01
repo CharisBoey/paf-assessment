@@ -34,6 +34,6 @@ insert into users(email,name) values
 	('fred@gmail.com', 'Fred Flintstone'),
 	('barney@gmail.com', 'Barney Rubble'),
 	('fry@planetexpress.com', 'Philip J Fry'),
-    ('hlmer@gmail.com', 'Homer Simpson')
+   ('hlmer@gmail.com', 'Homer Simpson')
 	;
 

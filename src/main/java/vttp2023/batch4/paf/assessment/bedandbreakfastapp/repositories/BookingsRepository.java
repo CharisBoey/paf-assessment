@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import vttp2023.batch4.paf.assessment.bedandbreakfastapp.models.Bookings;
 import vttp2023.batch4.paf.assessment.bedandbreakfastapp.models.User;
+import vttp2023.batch4.paf.assessment.bedandbreakfastapp.services.BookingException;
 
 
 
@@ -40,10 +41,11 @@ public class BookingsRepository {
 		return Optional.of(new User(rs.getString("email"), rs.getString("name")));
 	}
 
-	// TODO: Task 6
+	// TODO: Task 6 
+	//REQUIRES A TRANSACTION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! BUT ON SERVICE METHOD
 	// IMPORTANT: DO NOT MODIFY THE SIGNATURE OF THIS METHOD.
 	// You may only add throw exceptions to this method
-	@Transactional(rollbackFor = {NoSuchFieldError.class, SecurityException.class, IllegalAccessException.class, DataAccessException.class})
+	/* @Transactional(rollbackFor = {NoSuchFieldError.class, SecurityException.class, IllegalAccessException.class, DataAccessException.class})
 	public void newUser(User user) throws NoSuchFieldException, SecurityException, IllegalArgumentException, DataAccessException {
 		
         RecordComponent[] rc = User.class.getRecordComponents();      
@@ -103,13 +105,60 @@ public class BookingsRepository {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
+	} */
 
 	// TODO: Task 6
 	// IMPORTANT: DO NOT MODIFY THE SIGNATURE OF THIS METHOD.
 	// You may only add throw exceptions to this method
 	//booking_id, listing_id, duration, email
-	public void newBookings(Bookings bookings) {
+	/* public void newBookings(Bookings bookings) {
 		template.update(SQL_INSERT_BOOKING_DETAILS, bookings.getBookingId(), bookings.getListingId(), bookings.getDuration(), bookings.getEmail());
+	} */
+
+	//TASK 6 ANSWER METHOD 1 ------------------------------------------------------------------------------
+	/* public void newUser(User user) throws BookingException{
+		//to get exceptions
+		//This is slightly weird since you are using BookingException for the creation of a new User --> create a Error specific to this instead of Booking
+		try{
+			//only one should be updated 
+			if (template.update(SQL_INSERT_NEW_USER, user.email(), user.name()) != 1){
+				throw new BookingException("Cannot insert");
+			}
+		} catch (DataAccessException ex){
+			throw new BookingException(ex.getMessage());
+		}
+		
 	}
+
+	public void newBookings(Bookings bookings) {
+		//Do the same throw exception here
+		template.update(SQL_INSERT_BOOKING_DETAILS, bookings.getBookingId(), bookings.getListingId(), bookings.getDuration(), bookings.getEmail());
+	} */
+	//END ANSWER 1 ----------------------------------------------------------------------------------------
+
+	//TASK 6 ANSWER METHOD 2 ------------------------------------------------------------------------------
+	public void newUser(User user) throws BookingException{
+		
+		if (template.update(SQL_INSERT_NEW_USER, user.email(), user.name()) != 1){
+			//needa use the {} for abstract class which is what DataAccessException is
+			//throw new DataAccessException("Cannot create new User"){};
+
+			//ORRR
+
+			//Throw ANY runtime exception
+			throw new IllegalArgumentException("Cannot create new User");
+		}
+		
+	}
+
+	public void newBookings(Bookings bookings) {
+		//Do the same throw exception here
+		if(template.update(SQL_INSERT_BOOKING_DETAILS, bookings.getBookingId(), bookings.getListingId(), bookings.getDuration(), bookings.getEmail()) !=1){
+			throw new IllegalArgumentException("Cannot create new Booking");
+		};
+	}
+	//END ANSWER 2 ----------------------------------------------------------------------------------------
+
+
+	//NOTE: Either handle exception in service or repository (might be easier in service) if done in service, just do generic ones in repo and deal with them in service
 }

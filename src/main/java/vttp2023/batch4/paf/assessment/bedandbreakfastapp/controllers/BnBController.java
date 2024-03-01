@@ -112,7 +112,7 @@ public class BnBController {
 		bookings.setDuration(j.getInt("nights"));
 		bookings.setListingId(j.getString("id"));
 		
-		try {
+		/* try {
 			listingsSvc.createBooking(bookings);
 		} catch (DataAccessException e) {
 			// TODO Auto-generated catch block
@@ -130,7 +130,7 @@ public class BnBController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return ResponseEntity.status(500).body("{IllegalArgumentException Error}");
-		}
+		} */
 
 		return ResponseEntity.ok("{}");
 	}
